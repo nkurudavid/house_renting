@@ -4,6 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+django = "*"
+djangorestframework = "*"
+pillow = "*"
+django-phonenumber-field = {extras = ["phonenumbers"], version = "*"}
+python-dotenv = "*"
 
 [dev-packages]
 
