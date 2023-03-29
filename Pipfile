@@ -9,6 +9,7 @@ djangorestframework = "*"
 pillow = "*"
 django-phonenumber-field = {extras = ["phonenumbers"], version = "*"}
 python-dotenv = "*"
+mysqlclient = "*"
 
 [dev-packages]
 
