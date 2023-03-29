@@ -10,6 +10,7 @@ pillow = "*"
 django-phonenumber-field = {extras = ["phonenumbers"], version = "*"}
 python-dotenv = "*"
 mysqlclient = "*"
+dj-rest-auth = "*"
 
 [dev-packages]
 
