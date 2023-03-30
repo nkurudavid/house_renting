@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # Other apps…
     'phonenumber_field',
     'users.apps.UsersConfig',
+    'renting.apps.RentingConfig',
     
     
 ]
