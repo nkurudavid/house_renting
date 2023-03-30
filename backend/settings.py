@@ -139,8 +139,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # The System User Model
-# AUTH_USER_MODEL = 'users.UserAccount'
-# swappable = 'AUTH_USER_MODEL'
+AUTH_USER_MODEL = 'users.UserAccount'
+swappable = 'AUTH_USER_MODEL'
 
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
