@@ -71,13 +71,29 @@ class Property(models.Model):
     city = models.ForeignKey(City, verbose_name="City/District", on_delete=models.PROTECT)
     type = models.ForeignKey(PropertyType, verbose_name="Property Type", on_delete=models.CASCADE)
     locationAddress = models.CharField(verbose_name="Location Address", max_length=255, blank=False)
-    description
-    bedrooms
-    bathrooms
-    is_furnished
-    floors
-    plot_size
-    renting_price
-    status
-    pub_date = models.DateTimeField(auto_now_add=True)
-    created_date
+    description = models.TextField(verbose_name="Property Description", blank=False)
+    bedrooms = models.IntegerField(verbose_name="Bedrooms")
+    bathrooms = models.IntegerField(verbose_name="Bathrooms")
+    is_furnished = models.BooleanField(verbose_name="Is funished", default=False)
+    floors = models.IntegerField(verbose_name="Floors")
+    plot_size = models.CharField(verbose_name="Plot Size", max_length=50)
+    renting_price = models.FloatField(verbose_name="Renting Price",)
+    status = models.BooleanField(verbose_name="Available")
+    pub_date = models.DateTimeField(verbose_name="Published Date",auto_now=True)
+    created_date = models.DateTimeField(verbose_name="Created Date",auto_now_add=True)
+    property_image = models.ImageField(
+        verbose_name="Property Image", 
+        upload_to='', 
+        height_field=None, 
+        width_field=None, 
+        max_length=None,
+        validators=[FileExtensionValidator(['png','jpg','jpeg'])]
+    )
+    
+    def  image(self):
+        return mark_safe('<img src="/../../media/%s" width="70" />' % (self.property_image))
+
+    image.allow_tags = True 
+    
+    def __str__(self):
+        return self.name
