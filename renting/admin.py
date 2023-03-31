@@ -5,93 +5,71 @@ from renting.models import *
 # Register your models here.
 @admin.register(Manager)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'gender', 'phone_number', 'location',)
+    list_display = ('user', 'gender', 'phone_number', 'image',)
     list_filter = ('gender',)
     fieldsets = (
-        ('MANAGER', {'fields': ('user', 'gender', 'phone_number', 'location',)}),
+        ('LANDLORD INFO', {'fields': ('user', 'gender', 'phone_number','profile_image',)}),
+        ('Location Address', {'fields': ('province', 'district', 'sector',)}),
     )
     add_fieldsets = (
-        ('REGISTER NEW USER', {
-            'classes': ('wide',),
-            'fields': ('user', 'gender', 'phone_number', 'location',),
-        }),
+        ('REGISTER LANDLORD', {'fields': ('user', 'gender', 'phone_number','profile_image',)}),
+        ('Location Address', {'fields': ('province', 'district', 'sector',)}),
     )
-    search_fields = ('user','phone_number',)
+    search_fields = ('user',)
     ordering = ('user',)
 
 
 
 @admin.register(Landlord)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'gender', 'phone_number', 'location',)
+    list_display = ('user', 'gender', 'phone_number', 'image',)
     list_filter = ('gender',)
     fieldsets = (
-        ('MANAGER', {'fields': ('user', 'gender', 'phone_number', 'location',)}),
+        ('LANDLORD INFO', {'fields': ('user', 'gender', 'phone_number','profile_image',)}),
+        ('Location Address', {'fields': ('province', 'district', 'sector', 'cell',)}),
     )
     add_fieldsets = (
-        ('REGISTER NEW USER', {
-            'classes': ('wide',),
-            'fields': ('user', 'gender', 'phone_number', 'location',),
-        }),
+        ('REGISTER LANDLORD', {'fields': ('user', 'gender', 'phone_number','profile_image',)}),
+        ('Location Address', {'fields': ('province', 'district', 'sector', 'cell',)}),
     )
-    search_fields = ('user','phone_number',)
+    search_fields = ('user',)
     ordering = ('user',)
-
-
-
-@admin.register(City)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'gender', 'phone_number', 'location',)
-    list_filter = ('gender',)
-    fieldsets = (
-        ('MANAGER', {'fields': ('user', 'gender', 'phone_number', 'location',)}),
-    )
-    add_fieldsets = (
-        ('REGISTER NEW USER', {
-            'classes': ('wide',),
-            'fields': ('user', 'gender', 'phone_number', 'location',),
-        }),
-    )
-    search_fields = ('user','phone_number',)
-    ordering = ('user',)
-
 
 
 @admin.register(PropertyType)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'gender', 'phone_number', 'location',)
-    list_filter = ('gender',)
+class PropertyTypeAdmin(admin.ModelAdmin):
+    list_display = ('type_name',)
     fieldsets = (
-        ('MANAGER', {'fields': ('user', 'gender', 'phone_number', 'location',)}),
+        ('PROPERTY TYPE', {'fields': ('type_name',)}),
     )
     add_fieldsets = (
-        ('REGISTER NEW USER', {
+        ('NEW PROPERTY TYPE', {
             'classes': ('wide',),
-            'fields': ('user', 'gender', 'phone_number', 'location',),
+            'fields': ('type_name',),
         }),
     )
-    search_fields = ('user','phone_number',)
-    ordering = ('user',)
+    search_fields = ('type_name',)
+    ordering = ('type_name',)
 
 
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'renting_price', 'status', 'created_date', 'image',)
-    list_filter = ('located_city','property_type','bedrooms','bathrooms','floors','is_furnished',)
+    list_display = ('title','description','renting_price','bedrooms','bathrooms','floors','is_furnished', 'status', 'created_date',)
+    list_filter = ('district','property_type','bedrooms','bathrooms','floors','is_furnished',)
     fieldsets = (
-        ('PROPERTY DETAILS', {'fields': ('user', 'gender', 'phone_number', 'location',)}),
-        ('PROPERTY DETAILS', {'fields': ('user', 'gender', 'phone_number', 'location',)}),
-        ('PROPERTY DETAILS', {'fields': ('user', 'gender', 'phone_number', 'location',)}),
+        ('PROPERTY DETAILS', {'fields': ('title','description','property_type',('bedrooms','bathrooms','floors','is_furnished'),'plot_size','renting_price','status',)}),
+        ('Location Address', {'fields': ('province', 'district', 'sector', 'cell', 'street',)}),
+        ('Property Owner', {'fields': ('landlord',)}),
+        ('Other Info', {'fields': ('created_date', 'pub_date',)}),
     )
     add_fieldsets = (
-        ('RECORD NEW PROPERTY', {
-            'classes': ('wide',),
-            'fields': ('user', 'gender', 'phone_number', 'location',),
-        }),
+        ('Property Owner', {'fields': ('landlord',)}),
+        ('NEW PROPERTY', {'fields': ('title','description','property_type',('bedrooms','bathrooms','floors','is_furnished'),'plot_size','renting_price','status',)}),
+        ('Location Address', {'fields': ('province', 'district', 'sector', 'cell', 'street',)}),
     )
-    search_fields = ('user','phone_number',)
-    ordering = ('user',)
+    search_fields = ('landlord','title',)
+    ordering = ('property_type','district',)
 
 
 
@@ -133,6 +111,10 @@ def get_app_list(self, request, app_label=None):
                     'PropertyType': 4,
                     'Property': 5,
                     'PublishingPayment': 6,
+                    'Province': 7,
+                    'District': 8,
+                    'Sector': 9,
+                    'Cell': 10,
                 }
                 app['models'].sort(key=lambda x: ordering[x['name']])
                

@@ -16,7 +16,7 @@ class Province(models.Model):
         return self.province_name
     
 class District(models.Model):
-    province = models.ForeignKey(Province,verbose_name="Province", on_delete=models.CASCADE)
+    province = models.ForeignKey(Province,verbose_name="Province", on_delete=models.CASCADE, related_name='districts')
     district_name = models.CharField(verbose_name="District Name", max_length=100, blank=False)
 
     def __str__(self):
@@ -24,14 +24,14 @@ class District(models.Model):
     
 
 class Sector(models.Model):
-    district = models.ForeignKey(District,verbose_name="District", on_delete=models.CASCADE)
+    district = models.ForeignKey(District,verbose_name="District", on_delete=models.CASCADE, related_name='sectors')
     sector_name = models.CharField(verbose_name="Sector Name", max_length=100, blank=False)
 
     def __str__(self):
         return self.sector_name
 
 class Cell(models.Model):
-    sector = models.ForeignKey(District,verbose_name="Sector", on_delete=models.CASCADE)
+    sector = models.ForeignKey(District,verbose_name="Sector", on_delete=models.CASCADE, related_name='cells')
     cell_name = models.CharField(verbose_name="Cell Name", max_length=100, blank=False)
 
     def __str__(self):
@@ -50,7 +50,20 @@ class Manager(models.Model):
     province = models.ForeignKey(Province, verbose_name="Province", on_delete=models.PROTECT)
     district = models.ForeignKey(District, verbose_name="District", on_delete=models.PROTECT)
     sector = models.ForeignKey(Sector, verbose_name="Sector", on_delete=models.PROTECT)
+    profile_image = models.ImageField(
+        verbose_name="Profile Picture", 
+        upload_to='profile', 
+        height_field=None, 
+        width_field=None, 
+        max_length=None,
+        validators=[FileExtensionValidator(['png','jpg','jpeg'])]
+    )
+    
+    def image(self):
+        return mark_safe('<img src="/../../media/%s" width="70" />' % (self.profile_image))
 
+    image.allow_tags = True 
+    
     def __str__(self):
         return '{} {}'.format(self.user.first_name,self.user.last_name)
 
@@ -78,7 +91,7 @@ class Landlord(models.Model):
         validators=[FileExtensionValidator(['png','jpg','jpeg'])]
     )
     
-    def  image(self):
+    def image(self):
         return mark_safe('<img src="/../../media/%s" width="70" />' % (self.profile_image))
 
     image.allow_tags = True 
@@ -88,10 +101,10 @@ class Landlord(models.Model):
 
 
 class PropertyType(models.Model):
-    name = models.CharField(verbose_name="Property Type", max_length=100, unique=True)
+    type_name = models.CharField(verbose_name="Property Type", max_length=100, unique=True)
 
     def __str__(self):
-        return self.name
+        return self.type_name
 
 class Property(models.Model):
     landlord = models.ForeignKey(Landlord, verbose_name="Landlord", on_delete=models.CASCADE, blank=False)
@@ -107,28 +120,26 @@ class Property(models.Model):
     status = models.BooleanField(verbose_name="Available")
     pub_date = models.DateTimeField(verbose_name="Published Date",auto_now=True)
     created_date = models.DateTimeField(verbose_name="Created Date",auto_now_add=True)
-    property_image = models.ImageField(
-        verbose_name="Property Image", 
-        upload_to='properties', 
-        height_field=None, 
-        width_field=None, 
-        max_length=None,
-        validators=[FileExtensionValidator(['png','jpg','jpeg'])]
-    )
     province = models.ForeignKey(Province, verbose_name="Province", on_delete=models.PROTECT)
     district = models.ForeignKey(District, verbose_name="District", on_delete=models.PROTECT)
     sector = models.ForeignKey(Sector, verbose_name="Sector", on_delete=models.PROTECT)
     cell = models.ForeignKey(Cell, verbose_name="Cell", on_delete=models.PROTECT)
     street = models.CharField(verbose_name="Street Address", max_length=50,blank=False)
     
-    def  image(self):
-        return mark_safe('<img src="/../../media/%s" width="70" />' % (self.property_image))
-
-    image.allow_tags = True 
-    
     def __str__(self):
         return self.title
     
+
+class PropertyImages(models.Model):
+    property = models.ForeignKey(Property, verbose_name="Property", on_delete=models.CASCADE, related_name='images')
+    property_image = models.ImageField(
+        verbose_name="Property Image", 
+        upload_to='properties',
+        validators=[FileExtensionValidator(['png','jpg','jpeg'])]
+    )
+    def __str__(self):
+        return '{} {}'.format(self.property, self.property_image)
+
 
 class PublishingPayment(models.Model):
     property = models.ForeignKey(Property, verbose_name="Property", on_delete=models.PROTECT)
