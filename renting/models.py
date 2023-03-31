@@ -9,6 +9,35 @@ from django.core.validators import FileExtensionValidator
 User = get_user_model()
 
 # Create your models here.
+class Province(models.Model):
+    province_name = models.CharField(verbose_name="Province Name", max_length=100, blank=False)
+
+    def __str__(self):
+        return self.province_name
+    
+class District(models.Model):
+    province = models.ForeignKey(Province,verbose_name="Province", on_delete=models.CASCADE)
+    district_name = models.CharField(verbose_name="District Name", max_length=100, blank=False)
+
+    def __str__(self):
+        return self.district_name
+    
+
+class Sector(models.Model):
+    district = models.ForeignKey(District,verbose_name="District", on_delete=models.CASCADE)
+    sector_name = models.CharField(verbose_name="Sector Name", max_length=100, blank=False)
+
+    def __str__(self):
+        return self.sector_name
+
+class Cell(models.Model):
+    sector = models.ForeignKey(District,verbose_name="Sector", on_delete=models.CASCADE)
+    cell_name = models.CharField(verbose_name="Cell Name", max_length=100, blank=False)
+
+    def __str__(self):
+        return self.cell_name
+
+
 class Manager(models.Model):
     class Gender(models.TextChoices):
         SELECT = "", "Select Gender"
@@ -18,7 +47,9 @@ class Manager(models.Model):
     user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE)
     gender = models.CharField(verbose_name="Gender", choices=Gender.choices, default=Gender.SELECT, max_length=10)
     phone_number = PhoneNumberField(verbose_name = "Phone Number",blank=True)
-    location = models.CharField(verbose_name="Location Address", max_length=255, blank=True)
+    province = models.ForeignKey(Province, verbose_name="Province", on_delete=models.PROTECT)
+    district = models.ForeignKey(District, verbose_name="District", on_delete=models.PROTECT)
+    sector = models.ForeignKey(Sector, verbose_name="Sector", on_delete=models.PROTECT)
 
     def __str__(self):
         return '{} {}'.format(self.user.first_name,self.user.last_name)
@@ -34,7 +65,10 @@ class Landlord(models.Model):
     user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE)
     gender = models.CharField(verbose_name="Gender", choices=Gender.choices, default=Gender.SELECT, max_length=10)
     phone_number = PhoneNumberField(verbose_name = "Phone Number",blank=True)
-    location = models.CharField(verbose_name="Location Address", max_length=255, blank=True)
+    province = models.ForeignKey(Province, verbose_name="Province", on_delete=models.PROTECT)
+    district = models.ForeignKey(District, verbose_name="District", on_delete=models.PROTECT)
+    sector = models.ForeignKey(Sector, verbose_name="Sector", on_delete=models.PROTECT)
+    cell = models.ForeignKey(Cell, verbose_name="Cell", on_delete=models.PROTECT)
     profile_image = models.ImageField(
         verbose_name="Profile Picture", 
         upload_to='profile', 
@@ -53,13 +87,6 @@ class Landlord(models.Model):
         return '{} {}'.format(self.user.first_name,self.user.last_name)
 
 
-class City(models.Model):
-    name = models.CharField(verbose_name="City/District", max_length=100, unique=True)
-
-    def __str__(self):
-        return self.name
-
-
 class PropertyType(models.Model):
     name = models.CharField(verbose_name="Property Type", max_length=100, unique=True)
 
@@ -68,9 +95,8 @@ class PropertyType(models.Model):
 
 class Property(models.Model):
     landlord = models.ForeignKey(Landlord, verbose_name="Landlord", on_delete=models.CASCADE, blank=False)
-    city = models.ForeignKey(City, verbose_name="City/District", on_delete=models.PROTECT)
-    type = models.ForeignKey(PropertyType, verbose_name="Property Type", on_delete=models.CASCADE)
-    locationAddress = models.CharField(verbose_name="Location Address", max_length=255, blank=False)
+    property_type = models.ForeignKey(PropertyType, verbose_name="Property Type", on_delete=models.CASCADE)
+    title = models.CharField(verbose_name="Property Title", max_length=100)
     description = models.TextField(verbose_name="Property Description", blank=False)
     bedrooms = models.IntegerField(verbose_name="Bedrooms")
     bathrooms = models.IntegerField(verbose_name="Bathrooms")
@@ -89,6 +115,11 @@ class Property(models.Model):
         max_length=None,
         validators=[FileExtensionValidator(['png','jpg','jpeg'])]
     )
+    province = models.ForeignKey(Province, verbose_name="Province", on_delete=models.PROTECT)
+    district = models.ForeignKey(District, verbose_name="District", on_delete=models.PROTECT)
+    sector = models.ForeignKey(Sector, verbose_name="Sector", on_delete=models.PROTECT)
+    cell = models.ForeignKey(Cell, verbose_name="Cell", on_delete=models.PROTECT)
+    street = models.CharField(verbose_name="Street Address", max_length=50,blank=False)
     
     def  image(self):
         return mark_safe('<img src="/../../media/%s" width="70" />' % (self.property_image))
@@ -96,7 +127,7 @@ class Property(models.Model):
     image.allow_tags = True 
     
     def __str__(self):
-        return self.name
+        return self.title
     
 
 class PublishingPayment(models.Model):
