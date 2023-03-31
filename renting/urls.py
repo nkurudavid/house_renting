@@ -3,5 +3,5 @@ from renting.views import *
 
 
 urlpatterns = [
-    path('home/', ),
+    # path('home/', ),
 ]
