@@ -4,7 +4,7 @@ from renting.models import *
 
 # Register your models here.
 @admin.register(Manager)
-class UserAdmin(admin.ModelAdmin):
+class ManagerAdmin(admin.ModelAdmin):
     list_display = ('user', 'gender', 'phone_number', 'image',)
     list_filter = ('gender',)
     fieldsets = (
@@ -21,7 +21,7 @@ class UserAdmin(admin.ModelAdmin):
 
 
 @admin.register(Landlord)
-class UserAdmin(admin.ModelAdmin):
+class LandlordAdmin(admin.ModelAdmin):
     list_display = ('user', 'gender', 'phone_number', 'image',)
     list_filter = ('gender',)
     fieldsets = (
@@ -88,6 +88,65 @@ class PublishingPaymentAdmin(admin.ModelAdmin):
     )
     search_fields = ('property', 'landlord', 'payment_method',)
     ordering = ('payment_method',)
+
+@admin.register(Province)
+class ProvinceAdmin(admin.ModelAdmin):
+    list_display = ('province_name',)
+    fieldsets = (
+        ('PROVINCE', {'fields': ('province_name',)}),
+    )
+    add_fieldsets = (
+        ('NEW PROVINCE', {'fields': ('province_name',)}),
+    )
+    search_fields = ('province_name',)
+    ordering = ('province_name',)
+
+
+
+@admin.register(District)
+class DistrictAdmin(admin.ModelAdmin):
+    list_display = ('province','district_name',)
+    list_filter = ('province',)
+    fieldsets = (
+        ('DISTRICT', {'fields': ('province','district_name',)}),
+    )
+    add_fieldsets = (
+        ('NEW DISTRICT', {'fields': ('province','district_name',)}),
+    )
+    search_fields = ('province','district_name',)
+    ordering = ('province',)
+
+
+
+@admin.register(Sector)
+class SectorAdmin(admin.ModelAdmin):
+    list_display = ('district','sector_name',)
+    list_filter = ('district',)
+    fieldsets = (
+        ('SECTOR', {'fields': ('district','sector_name',)}),
+    )
+    add_fieldsets = (
+        ('NEW SECTOR', {'fields': ('district','sector_name',)}),
+    )
+    search_fields = ('district','sector_name',)
+    ordering = ('district',)
+
+
+
+@admin.register(Cell)
+class CellAdmin(admin.ModelAdmin):
+    list_display = ('sector','cell_name',)
+    list_filter = ('sector',)
+    fieldsets = (
+        ('CELL', {'fields': ('sector','cell_name',)}),
+    )
+    add_fieldsets = (
+        ('NEW CELL', {'fields': ('sector','cell_name',)}),
+    )
+    search_fields = ('sector','cell_name',)
+    ordering = ('sector',)
+
+
 
 
 
