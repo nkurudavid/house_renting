@@ -10,14 +10,14 @@ User = get_user_model()
 
 # Create your models here.
 class Province(models.Model):
-    province_name = models.CharField(verbose_name="Province Name", max_length=100, blank=False)
+    province_name = models.CharField(verbose_name="Province Name", max_length=100, blank=False, unique=True)
 
     def __str__(self):
         return self.province_name
     
 class District(models.Model):
     province = models.ForeignKey(Province,verbose_name="Province", on_delete=models.CASCADE, related_name='districts')
-    district_name = models.CharField(verbose_name="District Name", max_length=100, blank=False)
+    district_name = models.CharField(verbose_name="District Name", max_length=100, blank=False, unique=True)
 
     def __str__(self):
         return self.district_name
@@ -25,14 +25,14 @@ class District(models.Model):
 
 class Sector(models.Model):
     district = models.ForeignKey(District,verbose_name="District", on_delete=models.CASCADE, related_name='sectors')
-    sector_name = models.CharField(verbose_name="Sector Name", max_length=100, blank=False)
+    sector_name = models.CharField(verbose_name="Sector Name", max_length=100, blank=False, unique=True)
 
     def __str__(self):
         return self.sector_name
 
 class Cell(models.Model):
-    sector = models.ForeignKey(District,verbose_name="Sector", on_delete=models.CASCADE, related_name='cells')
-    cell_name = models.CharField(verbose_name="Cell Name", max_length=100, blank=False)
+    sector = models.ForeignKey(Sector,verbose_name="Sector", on_delete=models.CASCADE, related_name='cells')
+    cell_name = models.CharField(verbose_name="Cell Name", max_length=100, blank=False, unique=True)
 
     def __str__(self):
         return self.cell_name
@@ -46,7 +46,7 @@ class Manager(models.Model):
 
     user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE)
     gender = models.CharField(verbose_name="Gender", choices=Gender.choices, default=Gender.SELECT, max_length=10)
-    phone_number = PhoneNumberField(verbose_name = "Phone Number",blank=True)
+    phone_number = PhoneNumberField(verbose_name = "Phone Number",blank=True, unique=True)
     province = models.ForeignKey(Province, verbose_name="Province", on_delete=models.PROTECT)
     district = models.ForeignKey(District, verbose_name="District", on_delete=models.PROTECT)
     sector = models.ForeignKey(Sector, verbose_name="Sector", on_delete=models.PROTECT)
@@ -77,7 +77,7 @@ class Landlord(models.Model):
 
     user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE)
     gender = models.CharField(verbose_name="Gender", choices=Gender.choices, default=Gender.SELECT, max_length=10)
-    phone_number = PhoneNumberField(verbose_name = "Phone Number",blank=True)
+    phone_number = PhoneNumberField(verbose_name = "Phone Number",blank=True, unique=True)
     province = models.ForeignKey(Province, verbose_name="Province", on_delete=models.PROTECT)
     district = models.ForeignKey(District, verbose_name="District", on_delete=models.PROTECT)
     sector = models.ForeignKey(Sector, verbose_name="Sector", on_delete=models.PROTECT)

@@ -105,7 +105,7 @@ class ProvinceAdmin(admin.ModelAdmin):
 
 @admin.register(District)
 class DistrictAdmin(admin.ModelAdmin):
-    list_display = ('province','district_name',)
+    list_display = ('district_name','province',)
     list_filter = ('province',)
     fieldsets = (
         ('DISTRICT', {'fields': ('province','district_name',)}),
@@ -120,7 +120,7 @@ class DistrictAdmin(admin.ModelAdmin):
 
 @admin.register(Sector)
 class SectorAdmin(admin.ModelAdmin):
-    list_display = ('district','sector_name',)
+    list_display = ('sector_name','district',)
     list_filter = ('district',)
     fieldsets = (
         ('SECTOR', {'fields': ('district','sector_name',)}),
@@ -135,7 +135,7 @@ class SectorAdmin(admin.ModelAdmin):
 
 @admin.register(Cell)
 class CellAdmin(admin.ModelAdmin):
-    list_display = ('sector','cell_name',)
+    list_display = ('cell_name','sector',)
     list_filter = ('sector',)
     fieldsets = (
         ('CELL', {'fields': ('sector','cell_name',)}),
