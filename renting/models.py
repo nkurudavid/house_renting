@@ -37,7 +37,7 @@ class Landlord(models.Model):
     location = models.CharField(verbose_name="Location Address", max_length=255, blank=True)
     profile_image = models.ImageField(
         verbose_name="Profile Picture", 
-        upload_to='', 
+        upload_to='profile', 
         height_field=None, 
         width_field=None, 
         max_length=None,
@@ -83,7 +83,7 @@ class Property(models.Model):
     created_date = models.DateTimeField(verbose_name="Created Date",auto_now_add=True)
     property_image = models.ImageField(
         verbose_name="Property Image", 
-        upload_to='', 
+        upload_to='properties', 
         height_field=None, 
         width_field=None, 
         max_length=None,
@@ -97,3 +97,14 @@ class Property(models.Model):
     
     def __str__(self):
         return self.name
+    
+
+class PublishingPayment(models.Model):
+    property = models.ForeignKey(Property, verbose_name="Property", on_delete=models.PROTECT)
+    landlord = models.ForeignKey(Landlord, verbose_name="Landlord", on_delete=models.PROTECT)
+    payment_amount = models.FloatField(verbose_name="Payment Amount", null=False, blank=False)
+    payment_method = models.CharField(verbose_name="Payment Method", max_length=50, null=False, blank=False)
+    created_date = models.DateTimeField(verbose_name="Created Date",auto_now_add=True)
+    
+    def __str__(self):
+        return '{} {}'.format(self.property, self.payment_amount)
